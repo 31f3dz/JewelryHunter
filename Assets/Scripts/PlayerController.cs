@@ -27,6 +27,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameController.gameState != "playing")
+        {
+            return; // Updateの処理を強制終了
+        }
+
         // 左右のキーが押された場合、どちらの値だったのかをaxisHに格納
         // 引数Horizontalの場合：水平方向のキーが何か押された場合、左なら-1、右なら1、何も押されていないのであれば常に0を返すメソッド
         axisH = Input.GetAxisRaw("Horizontal");
@@ -97,11 +102,37 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Goal")
         {
-            GameController.gameState = "gameclear";
+            Goal();
         }
         else if (collision.gameObject.tag == "Dead")
         {
-            GameController.gameState = "gameover";
+            GameOver();
         }
+    }
+
+    public void Goal()
+    {
+        GameController.gameState = "gameclear";
+        animator.SetBool("gameClear", true); // PlayerClearアニメをON
+        PlayerStop(); // 動きを止める
+    }
+
+    public void GameOver()
+    {
+        GameController.gameState = "gameover";
+        animator.SetBool("gameOver", true); // PlayerOverアニメをON
+        PlayerStop(); // 動きを止める
+
+        // プレイヤーを上に跳ね上げる
+        rbody.AddForce(new Vector2(0, 5.0f), ForceMode2D.Impulse);
+        // 当たり判定もカット
+        GetComponent<CapsuleCollider2D>().enabled = false;
+    }
+
+    // プレイヤーの動きを停止
+    public void PlayerStop()
+    {
+        // 速度を0にして止める
+        rbody.velocity = new Vector2(0, 0);
     }
 }
