@@ -63,6 +63,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GameController.gameState != "playing")
+        {
+            return; // Updateの処理を強制終了
+        }
+
         // 地面にいるかどうかをサークルキャストを使って判別
         onGround = Physics2D.CircleCast(
             transform.position, // Playerの基準点
@@ -107,6 +112,13 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Dead")
         {
             GameOver();
+        }
+
+        if (collision.gameObject.tag == "Item") // Itemに触れたら
+        {
+            ItemData itemdata = collision.gameObject.GetComponent<ItemData>(); // ぶつかったItemのスクリプトを取得
+            GameController.stageScore += itemdata.value; // ぶつかったItemのスクリプトに記されているvalueの値をstageScoreに加算
+            Destroy(collision.gameObject); // 相手の本体を消す
         }
     }
 
