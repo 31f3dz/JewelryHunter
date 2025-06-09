@@ -1,26 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private float axisH; // ¶‰E‚ÌƒL[‚Ì’l‚ğŠi”[
-    Rigidbody2D rbody; // Rigidbody2D‚Ìî•ñ‚ğˆµ‚¤‚½‚ß‚Ì”}‘Ì
-    Animator animator; // Animator‚Ìî•ñ‚ğˆµ‚¤‚½‚ß‚Ì”}‘Ì
-    public float speed = 3.0f; // •à‚­ƒXƒs[ƒh
-    bool isJump; // ƒWƒƒƒ“ƒv’†‚©‚Ç‚¤‚©
-    bool onGround; // ’n–Ê”»’è
-    public LayerMask groundLayer; // ’n–Ê”»’è‚Ì‘ÎÛ‚ÌƒŒƒCƒ„[‚ª‰½‚©‚ğŒˆ‚ß‚Ä‚¨‚­
-    public float jump = 9.0f; // ƒWƒƒƒ“ƒv—Í
+    private float axisH; // å·¦å³ã®ã‚­ãƒ¼ã®å€¤ã‚’æ ¼ç´
+    Rigidbody2D rbody; // Rigidbody2Dã®æƒ…å ±ã‚’æ‰±ã†ãŸã‚ã®åª’ä½“
+    Animator animator; // Animatorã®æƒ…å ±ã‚’æ‰±ã†ãŸã‚ã®åª’ä½“
+    public float speed = 3.0f; // æ­©ãã‚¹ãƒ”ãƒ¼ãƒ‰
+    bool isJump; // ã‚¸ãƒ£ãƒ³ãƒ—ä¸­ã‹ã©ã†ã‹
+    bool onGround; // åœ°é¢åˆ¤å®š
+    public LayerMask groundLayer; // åœ°é¢åˆ¤å®šã®å¯¾è±¡ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒä½•ã‹ã‚’æ±ºã‚ã¦ãŠã
+    public float jump = 9.0f; // ã‚¸ãƒ£ãƒ³ãƒ—åŠ›
+
+    AudioSource audio;
+    public AudioClip jumpSE;
+
+    bool isMobileInput; // ãƒ¢ãƒã‚¤ãƒ«ã®å…¥åŠ›ãŒã‚ã£ãŸã‹ã©ã†ã‹
 
     // Start is called before the first frame update
     void Start()
     {
-        // Player‚É‚Â‚¢‚Ä‚¢‚éRigidbody2DƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ•Ï”rbody‚Éh‚µ‚½BˆÈŒãARigidbody2DƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì‹@”\‚Írbody‚Æ‚¢‚¤•Ï”‚ğ’Ê‚µ‚ÄƒvƒƒOƒ‰ƒ€‘¤‚©‚çŠˆ—p‚Å‚«‚é
+        audio = GetComponent<AudioSource>();
+
+        // Playerã«ã¤ã„ã¦ã„ã‚‹Rigidbody2Dã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å¤‰æ•°rbodyã«å®¿ã—ãŸã€‚ä»¥å¾Œã€Rigidbody2Dã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®æ©Ÿèƒ½ã¯rbodyã¨ã„ã†å¤‰æ•°ã‚’é€šã—ã¦ãƒ—ãƒ­ã‚°ãƒ©ãƒ å´ã‹ã‚‰æ´»ç”¨ã§ãã‚‹
         rbody = GetComponent<Rigidbody2D>();
 
-        // Player‚É‚Â‚¢‚Ä‚¢‚éAnimatorƒRƒ“ƒ|[ƒlƒ“ƒg‚ğ•Ï”animator‚Éh‚µ‚½
+        // Playerã«ã¤ã„ã¦ã„ã‚‹Animatorã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚’å¤‰æ•°animatorã«å®¿ã—ãŸ
         animator = GetComponent<Animator>();
     }
 
@@ -29,32 +36,36 @@ public class PlayerController : MonoBehaviour
     {
         if (GameController.gameState != "playing")
         {
-            return; // Update‚Ìˆ—‚ğ‹­§I—¹
+            return; // Updateã®å‡¦ç†ã‚’å¼·åˆ¶çµ‚äº†
         }
 
-        // ¶‰E‚ÌƒL[‚ª‰Ÿ‚³‚ê‚½ê‡A‚Ç‚¿‚ç‚Ì’l‚¾‚Á‚½‚Ì‚©‚ğaxisH‚ÉŠi”[
-        // ˆø”Horizontal‚Ìê‡F…•½•ûŒü‚ÌƒL[‚ª‰½‚©‰Ÿ‚³‚ê‚½ê‡A¶‚È‚ç-1A‰E‚È‚ç1A‰½‚à‰Ÿ‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Å‚ ‚ê‚Îí‚É0‚ğ•Ô‚·ƒƒ\ƒbƒh
-        axisH = Input.GetAxisRaw("Horizontal");
+        // å·¦å³ã®ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸå ´åˆã€ã©ã¡ã‚‰ã®å€¤ã ã£ãŸã®ã‹ã‚’axisHã«æ ¼ç´
+        // å¼•æ•°Horizontalã®å ´åˆï¼šæ°´å¹³æ–¹å‘ã®ã‚­ãƒ¼ãŒä½•ã‹æŠ¼ã•ã‚ŒãŸå ´åˆã€å·¦ãªã‚‰-1ã€å³ãªã‚‰1ã€ä½•ã‚‚æŠ¼ã•ã‚Œã¦ã„ãªã„ã®ã§ã‚ã‚Œã°å¸¸ã«0ã‚’è¿”ã™ãƒ¡ã‚½ãƒƒãƒ‰
+        // ãƒ¢ãƒã‚¤ãƒ«ç«¯æœ«ã‹ã‚‰ã®å…¥åŠ›ã‚’æ¤œçŸ¥ã—ã¦ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ã‚‹é–“ã¯ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æƒ…å ±ã¯æ¡ç”¨ã•ã‚Œãªã„
+        if (!isMobileInput)
+        {
+            axisH = Input.GetAxisRaw("Horizontal");
+        }
 
-        // ‚à‚µaxisH‚ª³‚Ì”‚È‚ç‰EŒü‚«
+        // ã‚‚ã—axisHãŒæ­£ã®æ•°ãªã‚‰å³å‘ã
         if (axisH > 0)
         {
-            // this.gameObject.GetComponent<Transform>().localScale‚ğMonoBehaviour‚ªÈ—ª
+            // this.gameObject.GetComponent<Transform>().localScaleã‚’MonoBehaviourãŒçœç•¥
             transform.localScale = new Vector3(1, 1, 1);
-            animator.SetBool("run", true); // ’S“–‚µ‚Ä‚¢‚éƒRƒ“ƒgƒ[ƒ‰[‚Ìƒpƒ‰ƒ[ƒ^‚ğ•Ï‚¦‚é
+            animator.SetBool("run", true); // æ‹…å½“ã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å¤‰ãˆã‚‹
         }
-        // ‚Å‚È‚¯‚ê‚ÎA‚à‚µaxisH‚ª•‰‚Ì”‚È‚ç¶Œü‚«
+        // ã§ãªã‘ã‚Œã°ã€ã‚‚ã—axisHãŒè² ã®æ•°ãªã‚‰å·¦å‘ã
         else if (axisH < 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
-            animator.SetBool("run", true); // ’S“–‚µ‚Ä‚¢‚éƒRƒ“ƒgƒ[ƒ‰[‚Ìƒpƒ‰ƒ[ƒ^‚ğ•Ï‚¦‚é
+            animator.SetBool("run", true); // æ‹…å½“ã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å¤‰ãˆã‚‹
         }
         else
         {
-            animator.SetBool("run", false); // ’S“–‚µ‚Ä‚¢‚éƒRƒ“ƒgƒ[ƒ‰[‚Ìƒpƒ‰ƒ[ƒ^‚ğ•Ï‚¦‚é
+            animator.SetBool("run", false); // æ‹…å½“ã—ã¦ã„ã‚‹ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å¤‰ãˆã‚‹
         }
 
-        // ‚à‚µƒWƒƒƒ“ƒvƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç
+        // ã‚‚ã—ã‚¸ãƒ£ãƒ³ãƒ—ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‚‰
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
@@ -65,25 +76,25 @@ public class PlayerController : MonoBehaviour
     {
         if (GameController.gameState != "playing")
         {
-            return; // Update‚Ìˆ—‚ğ‹­§I—¹
+            return; // Updateã®å‡¦ç†ã‚’å¼·åˆ¶çµ‚äº†
         }
 
-        // ’n–Ê‚É‚¢‚é‚©‚Ç‚¤‚©‚ğƒT[ƒNƒ‹ƒLƒƒƒXƒg‚ğg‚Á‚Ä”»•Ê
+        // åœ°é¢ã«ã„ã‚‹ã‹ã©ã†ã‹ã‚’ã‚µãƒ¼ã‚¯ãƒ«ã‚­ãƒ£ã‚¹ãƒˆã‚’ä½¿ã£ã¦åˆ¤åˆ¥
         onGround = Physics2D.CircleCast(
-            transform.position, // Player‚ÌŠî€“_
-            0.2f, // ”¼Œa
-            Vector2.down, // w’è‚µ‚½“_‚©‚ç‚Ç‚Ì•ûŒü‚Éƒ`ƒFƒbƒN‚ğL‚Î‚·‚© new Vector2(0, -1)
-            0.0f, // w’è‚µ‚½“_‚©‚ç‚Ç‚Ì‚­‚ç‚¢ƒ`ƒFƒbƒN‚Ì‹——£‚ğL‚Î‚·‚©
-            groundLayer // w’è‚µ‚½ƒŒƒCƒ„[
+            transform.position, // Playerã®åŸºæº–ç‚¹
+            0.2f, // åŠå¾„
+            Vector2.down, // æŒ‡å®šã—ãŸç‚¹ã‹ã‚‰ã©ã®æ–¹å‘ã«ãƒã‚§ãƒƒã‚¯ã‚’ä¼¸ã°ã™ã‹ new Vector2(0, -1)
+            0.0f, // æŒ‡å®šã—ãŸç‚¹ã‹ã‚‰ã©ã®ãã‚‰ã„ãƒã‚§ãƒƒã‚¯ã®è·é›¢ã‚’ä¼¸ã°ã™ã‹
+            groundLayer // æŒ‡å®šã—ãŸãƒ¬ã‚¤ãƒ¤ãƒ¼
         );
 
-        // velocity‚É2²‚Ì•ûŒüƒf[ƒ^iVector2j‚ğ‘ã“ü
+        // velocityã«2è»¸ã®æ–¹å‘ãƒ‡ãƒ¼ã‚¿ï¼ˆVector2ï¼‰ã‚’ä»£å…¥
         rbody.velocity = new Vector2(axisH * speed, rbody.velocity.y);
 
-        // ƒWƒƒƒ“ƒv’†ƒtƒ‰ƒO‚ª—§‚Á‚½‚ç
+        // ã‚¸ãƒ£ãƒ³ãƒ—ä¸­ãƒ•ãƒ©ã‚°ãŒç«‹ã£ãŸã‚‰
         if (isJump)
         {
-            // Rigidbody2D‚ÌAddForceƒƒ\ƒbƒh‚É‚æ‚Á‚Äã‚É‰Ÿ‚µo‚·
+            // Rigidbody2Dã®AddForceãƒ¡ã‚½ãƒƒãƒ‰ã«ã‚ˆã£ã¦ä¸Šã«æŠ¼ã—å‡ºã™
             rbody.AddForce(new Vector2(0, jump), ForceMode2D.Impulse);
             isJump = false;
         }
@@ -91,18 +102,19 @@ public class PlayerController : MonoBehaviour
 
     public void Jump()
     {
-        // ’n–Ê”»’è‚ªfalse‚È‚çƒWƒƒƒ“ƒvƒtƒ‰ƒO‚Í—§‚Ä‚È‚¢
+        // åœ°é¢åˆ¤å®šãŒfalseãªã‚‰ã‚¸ãƒ£ãƒ³ãƒ—ãƒ•ãƒ©ã‚°ã¯ç«‹ã¦ãªã„
         if (onGround)
         {
             isJump = true;
-            animator.SetTrigger("jump"); // ƒWƒƒƒ“ƒvƒAƒjƒ‚Ì‚½‚ß‚ÌƒgƒŠƒK[”­“®
+            animator.SetTrigger("jump"); // ã‚¸ãƒ£ãƒ³ãƒ—ã‚¢ãƒ‹ãƒ¡ã®ãŸã‚ã®ãƒˆãƒªã‚¬ãƒ¼ç™ºå‹•
+            audio.PlayOneShot(jumpSE);
         }
     }
 
-    // ‰½‚©‚Æ‚Ô‚Â‚©‚Á‚½‚ç”­“®‚·‚éƒƒ\ƒbƒh
-    // ‚Ô‚Â‚©‚Á‚½‘Šè‚ÌColliderî•ñ‚ğˆø”collision‚É“ü‚ê‚é
-    // ‘Šè‚ÉCollider‚ª‚Â‚¢‚Ä‚¢‚È‚¢‚ÆˆÓ–¡‚ª‚È‚¢
-    // ¦‘Šè‚ÌCollider‚ªisTrigger‚Å‚ ‚é‚±‚Æ
+    // ä½•ã‹ã¨ã¶ã¤ã‹ã£ãŸã‚‰ç™ºå‹•ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰
+    // ã¶ã¤ã‹ã£ãŸç›¸æ‰‹ã®Collideræƒ…å ±ã‚’å¼•æ•°collisionã«å…¥ã‚Œã‚‹
+    // ç›¸æ‰‹ã«ColliderãŒã¤ã„ã¦ã„ãªã„ã¨æ„å‘³ãŒãªã„
+    // â€»ç›¸æ‰‹ã®ColliderãŒisTriggerã§ã‚ã‚‹ã“ã¨
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Goal")
@@ -114,37 +126,46 @@ public class PlayerController : MonoBehaviour
             GameOver();
         }
 
-        if (collision.gameObject.tag == "Item") // Item‚ÉG‚ê‚½‚ç
+        if (collision.gameObject.tag == "Item") // Itemã«è§¦ã‚ŒãŸã‚‰
         {
-            ItemData itemdata = collision.gameObject.GetComponent<ItemData>(); // ‚Ô‚Â‚©‚Á‚½Item‚ÌƒXƒNƒŠƒvƒg‚ğæ“¾
-            GameController.stageScore += itemdata.value; // ‚Ô‚Â‚©‚Á‚½Item‚ÌƒXƒNƒŠƒvƒg‚É‹L‚³‚ê‚Ä‚¢‚évalue‚Ì’l‚ğstageScore‚É‰ÁZ
-            Destroy(collision.gameObject); // ‘Šè‚Ì–{‘Ì‚ğÁ‚·
+            ItemData itemdata = collision.gameObject.GetComponent<ItemData>(); // ã¶ã¤ã‹ã£ãŸItemã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å–å¾—
+            GameController.stageScore += itemdata.value; // ã¶ã¤ã‹ã£ãŸItemã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã«è¨˜ã•ã‚Œã¦ã„ã‚‹valueã®å€¤ã‚’stageScoreã«åŠ ç®—
+            Destroy(collision.gameObject); // ç›¸æ‰‹ã®æœ¬ä½“ã‚’æ¶ˆã™
         }
     }
 
     public void Goal()
     {
         GameController.gameState = "gameclear";
-        animator.SetBool("gameClear", true); // PlayerClearƒAƒjƒ‚ğON
-        PlayerStop(); // “®‚«‚ğ~‚ß‚é
+        animator.SetBool("gameClear", true); // PlayerClearã‚¢ãƒ‹ãƒ¡ã‚’ON
+        PlayerStop(); // å‹•ãã‚’æ­¢ã‚ã‚‹
     }
 
     public void GameOver()
     {
         GameController.gameState = "gameover";
-        animator.SetBool("gameOver", true); // PlayerOverƒAƒjƒ‚ğON
-        PlayerStop(); // “®‚«‚ğ~‚ß‚é
+        animator.SetBool("gameOver", true); // PlayerOverã‚¢ãƒ‹ãƒ¡ã‚’ON
+        PlayerStop(); // å‹•ãã‚’æ­¢ã‚ã‚‹
 
-        // ƒvƒŒƒCƒ„[‚ğã‚É’µ‚Ëã‚°‚é
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ä¸Šã«è·³ã­ä¸Šã’ã‚‹
         rbody.AddForce(new Vector2(0, 5.0f), ForceMode2D.Impulse);
-        // “–‚½‚è”»’è‚àƒJƒbƒg
+        // å½“ãŸã‚Šåˆ¤å®šã‚‚ã‚«ãƒƒãƒˆ
         GetComponent<CapsuleCollider2D>().enabled = false;
     }
 
-    // ƒvƒŒƒCƒ„[‚Ì“®‚«‚ğ’â~
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‹•ãã‚’åœæ­¢
     public void PlayerStop()
     {
-        // ‘¬“x‚ğ0‚É‚µ‚Ä~‚ß‚é
+        // é€Ÿåº¦ã‚’0ã«ã—ã¦æ­¢ã‚ã‚‹
         rbody.velocity = new Vector2(0, 0);
+    }
+
+    public void MobileAxis(float axis)
+    {
+        axisH = axis; // MobileStick.csçµŒç”±ã§ä¸ãˆã‚‰ã‚ŒãŸå¼•æ•°axisã®å€¤ãŒå…¥ã‚‹(1ã‹-1ã‹)
+
+        // axisã«å€¤ãŒå…¥ã£ã¦ã„ãŸã¨ã„ã†ã“ã¨ã§ã‚ã‚Œã°ãƒ¢ãƒã‚¤ãƒ«UIãŒè§¦ã‚‰ã‚ŒãŸã¨ã„ã†ã“ã¨ã«ãªã‚‹ãŸã‚ã€ãƒ¢ãƒã‚¤ãƒ«å…¥åŠ›ãƒ•ãƒ©ã‚°ã‚’ONã«ã™ã‚‹
+        if (axisH == 0) isMobileInput = false;
+        else isMobileInput = true;
     }
 }
