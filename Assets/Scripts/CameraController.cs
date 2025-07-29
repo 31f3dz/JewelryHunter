@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float leftLimit; // ƒJƒƒ‰‚Ì¶‚ÌˆÚ“®‚ÌŒÀŠE
-    public float rightLimit; // ƒJƒƒ‰‚Ì‰E‚ÌˆÚ“®‚ÌŒÀŠE
-    public float topLimit; // ƒJƒƒ‰‚Ìã‚ÌˆÚ“®‚ÌŒÀŠE
-    public float bottomLimit; // ƒJƒƒ‰‚Ì‰º‚ÌˆÚ“®‚ÌŒÀŠE
+    public float leftLimit; // ã‚«ãƒ¡ãƒ©ã®å·¦ã®ç§»å‹•ã®é™ç•Œ
+    public float rightLimit; // ã‚«ãƒ¡ãƒ©ã®å³ã®ç§»å‹•ã®é™ç•Œ
+    public float topLimit; // ã‚«ãƒ¡ãƒ©ã®ä¸Šã®ç§»å‹•ã®é™ç•Œ
+    public float bottomLimit; // ã‚«ãƒ¡ãƒ©ã®ä¸‹ã®ç§»å‹•ã®é™ç•Œ
 
-    public bool isForceScrollX; // X‹­§ƒXƒNƒ[ƒ‹ƒtƒ‰ƒO
-    public float forceScrollSpeedX = 0.5f; // ƒXƒNƒ[ƒ‹ƒXƒs[ƒh
+    public bool isForceScrollX; // Xå¼·åˆ¶ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ•ãƒ©ã‚°
+    public float forceScrollSpeedX = 0.5f; // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚¹ãƒ”ãƒ¼ãƒ‰
 
-    public bool isForceScrollY; // Y‹­§ƒXƒNƒ[ƒ‹ƒtƒ‰ƒO
-    public float forceScrollSpeedY = 0.5f; // ƒXƒNƒ[ƒ‹ƒXƒs[ƒh
+    public bool isForceScrollY; // Yå¼·åˆ¶ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ•ãƒ©ã‚°
+    public float forceScrollSpeedY = 0.5f; // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚¹ãƒ”ãƒ¼ãƒ‰
 
-    public GameObject subScreen; // ƒTƒuƒXƒNƒŠ[ƒ“
+    public GameObject subScreen; // ã‚µãƒ–ã‚¹ã‚¯ãƒªãƒ¼ãƒ³
 
     // Update is called once per frame
     void Update()
@@ -23,16 +23,16 @@ public class CameraController : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            float currentX = player.transform.position.x; // ƒvƒŒƒCƒ„[‚ÌXÀ•W‚ğæ“¾
-            float currentY = player.transform.position.y; // ƒvƒŒƒCƒ„[‚ÌYÀ•W‚ğæ“¾
+            float currentX = player.transform.position.x; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®Xåº§æ¨™ã‚’å–å¾—
+            float currentY = player.transform.position.y; // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®Yåº§æ¨™ã‚’å–å¾—
 
-            // X‚ª‹­§ƒXƒNƒ[ƒ‹‚È‚ç‚ÎAforceScrollSpeedX‚Ì•ª‚¾‚¯©“®‚Å‰ÁZ‚³‚ê‚Ä‚¢‚é
+            // XãŒå¼·åˆ¶ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãªã‚‰ã°ã€forceScrollSpeedXã®åˆ†ã ã‘è‡ªå‹•ã§åŠ ç®—ã•ã‚Œã¦ã„ã‚‹
             if (isForceScrollX) currentX = transform.position.x + (forceScrollSpeedX * Time.deltaTime);
 
-            // Y‚ª‹­§ƒXƒNƒ[ƒ‹‚È‚ç‚ÎAforceScrollSpeedY‚Ì•ª‚¾‚¯©“®‚Å‰ÁZ‚³‚ê‚Ä‚¢‚é
+            // YãŒå¼·åˆ¶ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãªã‚‰ã°ã€forceScrollSpeedYã®åˆ†ã ã‘è‡ªå‹•ã§åŠ ç®—ã•ã‚Œã¦ã„ã‚‹
             if (isForceScrollY) currentY = transform.position.y + (forceScrollSpeedY * Time.deltaTime);
 
-            // ƒŠƒ~ƒbƒg‚Å~‚Ü‚é
+            // ãƒªãƒŸãƒƒãƒˆã§æ­¢ã¾ã‚‹
             if (currentX < leftLimit)
             {
                 currentX = leftLimit;
@@ -51,10 +51,10 @@ public class CameraController : MonoBehaviour
                 currentY = topLimit;
             }
 
-            // X‚ÆY‚ÍƒvƒŒƒCƒ„[‚Æ“¯‚¶AZ²‚Í‹——£Š´‚ğ•Û‚Â
+            // Xã¨Yã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨åŒã˜ã€Zè»¸ã¯è·é›¢æ„Ÿã‚’ä¿ã¤
             transform.position = new Vector3(currentX, currentY, transform.position.z);
 
-            // ƒTƒuƒXƒNƒŠ[ƒ“‚ÍƒJƒƒ‰‚æ‚è“İ‚¢“®‚«‚Å˜A“®‚³‚¹‚é
+            // ã‚µãƒ–ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã¯ã‚«ãƒ¡ãƒ©ã‚ˆã‚Šéˆã„å‹•ãã§é€£å‹•ã•ã›ã‚‹
             if (subScreen != null)
             {
                 subScreen.transform.position = new Vector3(currentX / 2.0f, subScreen.transform.position.y, subScreen.transform.position.z);

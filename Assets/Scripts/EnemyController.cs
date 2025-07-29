@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float speed = 3.0f; // ˆÚ“®ƒXƒs[ƒh
-    public bool isToRight; // true = ‰EŒü‚«Afalse = ¶Œü‚«
-    int groundContactCount; // ’n–Ê‚É‚Ç‚Ì‚­‚ç‚¢ÚG‚µ‚½‚©
+    public float speed = 3.0f; // ç§»å‹•ã‚¹ãƒ”ãƒ¼ãƒ‰
+    public bool isToRight; // true = å³å‘ãã€false = å·¦å‘ã
+    int groundContactCount; // åœ°é¢ã«ã©ã®ãã‚‰ã„æ¥è§¦ã—ãŸã‹
 
-    public LayerMask groundLayer; // ’n–Ê”»’è‚Ì‘ÎÛƒŒƒCƒ„[
+    public LayerMask groundLayer; // åœ°é¢åˆ¤å®šã®å¯¾è±¡ãƒ¬ã‚¤ãƒ¤ãƒ¼
 
-    public bool isTimeTurn; // ŠÔ‚Å”½“]‚³‚¹‚é‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
-    public float turnTime; // ”½“]‚ÌƒCƒ“ƒ^[ƒoƒ‹
-    float pastTime; // Œo‰ßŠÔ
+    public bool isTimeTurn; // æ™‚é–“ã§åè»¢ã•ã›ã‚‹ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
+    public float turnTime; // åè»¢ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«
+    float pastTime; // çµŒéæ™‚é–“
 
     // Start is called before the first frame update
     void Start()
@@ -32,15 +32,15 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        // ŠÔ‚Å”½“]‚³‚¹‚éƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚ê‚Î
+        // æ™‚é–“ã§åè»¢ã•ã›ã‚‹ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ã‚Œã°
         if (isTimeTurn)
         {
-            pastTime += Time.deltaTime; // Œo‰ßŠÔ
+            pastTime += Time.deltaTime; // çµŒéæ™‚é–“
 
-            if (pastTime >= turnTime) // ƒCƒ“ƒ^[ƒoƒ‹‚¾‚¯ŠÔŒo‰ß‚µ‚Ä‚¢‚é‚æ‚¤‚È‚ç
+            if (pastTime >= turnTime) // ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒ«ã ã‘æ™‚é–“çµŒéã—ã¦ã„ã‚‹ã‚ˆã†ãªã‚‰
             {
-                pastTime = 0; // Ÿ‚É”õ‚¦‚ÄƒŠƒZƒbƒg
-                Turn(); // ”½“]
+                pastTime = 0; // æ¬¡ã«å‚™ãˆã¦ãƒªã‚»ãƒƒãƒˆ
+                Turn(); // åè»¢
             }
         }
     }
@@ -53,11 +53,11 @@ public class EnemyController : MonoBehaviour
         }
 
         bool onGround = Physics2D.CircleCast(
-            transform.position, // ƒZƒ“ƒT[‚Ì”­¶ˆÊ’u
-            0.5f, // ‰~‚Ì”¼Œa
-            Vector2.down, // ‚Ç‚±‚Ì•ûŠp‚ÉŒü‚¯‚é‚©
-            0, // ƒZƒ“ƒT[‚ğ”ò‚Î‚·‹——£
-            groundLayer // ’²¸‘ÎÛ‚ÌƒŒƒCƒ„[
+            transform.position, // ã‚»ãƒ³ã‚µãƒ¼ã®ç™ºç”Ÿä½ç½®
+            0.5f, // å††ã®åŠå¾„
+            Vector2.down, // ã©ã“ã®æ–¹è§’ã«å‘ã‘ã‚‹ã‹
+            0, // ã‚»ãƒ³ã‚µãƒ¼ã‚’é£›ã°ã™è·é›¢
+            groundLayer // èª¿æŸ»å¯¾è±¡ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼
         );
 
         if (onGround)
@@ -75,7 +75,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // ¶‚©‰E‚©‚ÌØ‚è‘Ö‚¦ƒƒ\ƒbƒh
+    // å·¦ã‹å³ã‹ã®åˆ‡ã‚Šæ›¿ãˆãƒ¡ã‚½ãƒƒãƒ‰
     void Turn()
     {
         isToRight = !isToRight;
@@ -84,12 +84,12 @@ public class EnemyController : MonoBehaviour
         else transform.localScale = new Vector2(1, 1);
     }
 
-    // Groundƒ^ƒOˆÈŠO‚Ì‚à‚Ì‚Æ‚Ô‚Â‚©‚Á‚½‚ç”½“]
+    // Groundã‚¿ã‚°ä»¥å¤–ã®ã‚‚ã®ã¨ã¶ã¤ã‹ã£ãŸã‚‰åè»¢
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag != "Ground")
         {
-            Turn(); // ‰½‚©‚Æ‚Ô‚Â‚©‚Á‚½‚ç”½“]
+            Turn(); // ä½•ã‹ã¨ã¶ã¤ã‹ã£ãŸã‚‰åè»¢
         }
     }
 
@@ -97,7 +97,7 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground")
         {
-            groundContactCount++; // V‚µ‚¢’n–Ê‚ÆÚG‚µ‚½‚ç1ƒJƒEƒ“ƒgƒvƒ‰ƒX
+            groundContactCount++; // æ–°ã—ã„åœ°é¢ã¨æ¥è§¦ã—ãŸã‚‰1ã‚«ã‚¦ãƒ³ãƒˆãƒ—ãƒ©ã‚¹
         }
     }
 
@@ -105,12 +105,12 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground")
         {
-            groundContactCount--; // ‰½‚©‚Ì’n–Ê‚©‚ç’Eo‚µ‚½‚ç1ƒJƒEƒ“ƒgƒ}ƒCƒiƒX
+            groundContactCount--; // ä½•ã‹ã®åœ°é¢ã‹ã‚‰è„±å‡ºã—ãŸã‚‰1ã‚«ã‚¦ãƒ³ãƒˆãƒã‚¤ãƒŠã‚¹
 
-            if (groundContactCount <= 0) // ƒ}ƒCƒiƒX‚µ‚½Œ‹‰ÊAV‚½‚ÉÚG‚·‚é’n–Ê‚à‚È‚¢‚Æ‚«‚ÍƒJƒEƒ“ƒg‚Í0¨ŠRÛ‚É‚¢‚é
+            if (groundContactCount <= 0) // ãƒã‚¤ãƒŠã‚¹ã—ãŸçµæœã€æ–°ãŸã«æ¥è§¦ã™ã‚‹åœ°é¢ã‚‚ãªã„ã¨ãã¯ã‚«ã‚¦ãƒ³ãƒˆã¯0â†’å´–éš›ã«ã„ã‚‹
             {
-                groundContactCount = 0; // ”O‚Ì‚½‚ßƒJƒEƒ“ƒg‚ğ–¾Šm‚É0‚É–ß‚·
-                Turn(); // ŠRÛ‚¾‚Æv‚í‚ê‚é‚Ì‚Å”½“]
+                groundContactCount = 0; // å¿µã®ãŸã‚ã‚«ã‚¦ãƒ³ãƒˆã‚’æ˜ç¢ºã«0ã«æˆ»ã™
+                Turn(); // å´–éš›ã ã¨æ€ã‚ã‚Œã‚‹ã®ã§åè»¢
             }
         }
     }

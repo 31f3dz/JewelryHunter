@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9009515253073795541}
   - component: {fileID: 4889680653104924052}
   - component: {fileID: 363854751787678077}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Item_green
   m_TagString: Item
   m_Icon: {fileID: 0}

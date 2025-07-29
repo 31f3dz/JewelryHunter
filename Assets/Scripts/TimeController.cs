@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class TimeController : MonoBehaviour
 {
-    public float gameTime = 60.0f; // Šî€ŠÔ
-    public float currentTime; // Œ»İ‚Ìc‚èŠÔ
-    float pastTime = 0; // Œo‰ßŠÔ
+    public float gameTime = 60.0f; // åŸºæº–æ™‚é–“
+    public float currentTime; // ç¾åœ¨ã®æ®‹ã‚Šæ™‚é–“
+    float pastTime = 0; // çµŒéæ™‚é–“
 
-    public bool isTimeOver; // ƒJƒEƒ“ƒgƒ_ƒEƒ“‚ğ~‚ß‚éƒtƒ‰ƒO
+    public bool isTimeOver; // ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã‚’æ­¢ã‚ã‚‹ãƒ•ãƒ©ã‚°
 
     // Start is called before the first frame update
     void Start()
     {
-        currentTime = gameTime; // c‚èŠÔ‚ÉŠî€ŠÔ‚ğƒZƒbƒg
+        currentTime = gameTime; // æ®‹ã‚Šæ™‚é–“ã«åŸºæº–æ™‚é–“ã‚’ã‚»ãƒƒãƒˆ
     }
 
     // Update is called once per frame
@@ -21,23 +21,23 @@ public class TimeController : MonoBehaviour
     {
         if (isTimeOver)
         {
-            return; // ƒ^ƒCƒ€ƒI[ƒo[‚Ìƒtƒ‰ƒO‚ª—§‚Á‚½‚ç‚»‚êˆÈãƒJƒEƒ“ƒgƒ_ƒEƒ“‚µ‚È‚¢
+            return; // ã‚¿ã‚¤ãƒ ã‚ªãƒ¼ãƒãƒ¼ã®ãƒ•ãƒ©ã‚°ãŒç«‹ã£ãŸã‚‰ãã‚Œä»¥ä¸Šã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã—ãªã„
         }
 
-        // Œo‰ßŠÔ
-        pastTime += Time.deltaTime; // 1ƒtƒŒ[ƒ€‚ ‚½‚è‚É‚©‚©‚éŠÔ
+        // çµŒéæ™‚é–“
+        pastTime += Time.deltaTime; // 1ãƒ•ãƒ¬ãƒ¼ãƒ ã‚ãŸã‚Šã«ã‹ã‹ã‚‹æ™‚é–“
 
-        // c‚èŠÔ‚ÌŒvZ
+        // æ®‹ã‚Šæ™‚é–“ã®è¨ˆç®—
         currentTime = gameTime - pastTime;
 
-        // c‚èŠÔ‚ª0•bˆÈ‰º‚Å‚ ‚ê‚Î
+        // æ®‹ã‚Šæ™‚é–“ãŒ0ç§’ä»¥ä¸‹ã§ã‚ã‚Œã°
         if (currentTime <= 0)
         {
-            isTimeOver = true; // ƒJƒEƒ“ƒgƒ_ƒEƒ“‚µ‚È‚¢ƒtƒ‰ƒO‚ğON
-            currentTime = 0; // c‚èŠÔ‚ğ0‚Éƒsƒbƒ^ƒŠ®‚¦‚é
+            isTimeOver = true; // ã‚«ã‚¦ãƒ³ãƒˆãƒ€ã‚¦ãƒ³ã—ãªã„ãƒ•ãƒ©ã‚°ã‚’ON
+            currentTime = 0; // æ®‹ã‚Šæ™‚é–“ã‚’0ã«ãƒ”ãƒƒã‚¿ãƒªæ•´ãˆã‚‹
         }
 
-        // ƒRƒ“ƒ\[ƒ‹ƒpƒlƒ‹‚Éî•ño—Í
-        // Debug.Log("c‚èŠÔF" + currentTime);
+        // ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ãƒ‘ãƒãƒ«ã«æƒ…å ±å‡ºåŠ›
+        // Debug.Log("æ®‹ã‚Šæ™‚é–“ï¼š" + currentTime);
     }
 }
